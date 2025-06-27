@@ -1,0 +1,46 @@
+[
+  {
+    "timestamp": "2025-06-27T19:20:33.335467",
+    "ad_text": "Get 50% off on all our summer shoes collection!",
+    "tone": "semi-fun",
+    "platforms": [
+      "Meta",
+      "Google",
+      "LinkedIn"
+    ],
+    "rewritten_output": "your_generated_output_here",
+    "rating": 4
+  },
+  {
+    "timestamp": "2025-06-27T20:05:55.999462",
+    "ad_text": "Get 50% off on all our summer shoes collection!",
+    "tone": "fun",
+    "platforms": [
+      "Meta"
+    ],
+    "rewritten_output": "\ud83c\udf89 Summer Shoe SALE! Get 50% OFF our entire collection! Step into summer with style! Shop now! #SummerShoes #50PercentOff",
+    "rating": 5
+  },
+  {
+    "timestamp": "2025-06-27T20:58:03.084833",
+    "ad_text": "Introducing our premium summer footwear collection - now available with exclusive seasonal discount of 40% off. Limited time offer on all sandals, sneakers, and casual shoes. Free shipping on orders over $75.",
+    "tone": "semi-fun",
+    "platforms": [
+      "Meta",
+      "Google",
+      "LinkedIn"
+    ],
+    "rewritten_output": "Here's the rewritten ad text, optimized for each platform:\n\n**Meta:**\nReady for summer? \u2600\ufe0f Our new premium footwear collection is here with a sizzling 40% off! Grab stylish sandals, fresh sneakers, and comfy casual shoes before this limited-time offer walks away. Free shipping on orders over $75! Shop now & step out in style. #SummerVibes #ShoeSale #NewArrivals #FootwearFashion\n\n**Google:**\nPremium Summer Footwear - 40% Off Sale. Limited-time offer on sandals, sneakers & casual shoes. Free shipping over $75.\n\n**LinkedIn:**\nIntroducing our new premium summer footwear collection, designed to enhance your seasonal style and comfort. For a limited time, take advantage of an exclusive 40% discount across our range of sandals, sneakers, and casual shoes. A smart investment for your wardrobe, with complimentary shipping on orders over $75. Explore the collection today.",
+    "rating": 5
+  },
+  {
+    "timestamp": "2025-06-27T20:59:41.355374",
+    "ad_text": "Introducing our premium summer footwear collection - now available with exclusive seasonal discount of 40% off. Limited time offer on all sandals, sneakers, and casual shoes. Free shipping on orders over $75.",
+    "tone": "fun",
+    "platforms": [
+      "Meta"
+    ],
+    "rewritten_output": "Meta:\nStep into summer with a *major* happy dance! \ud83d\udc83 Our premium summer footwear collection just dropped, and it's 40% OFF! \ud83c\udf89 Yes, you read that right! Sandals, sneakers, and casual shoes \u2013 all ready to level up your look. But hurry, this limited-time offer is walking away soon! Plus, get FREE shipping on orders over $75. \ud83d\ude09 Your feet (and wallet) will thank you!\n#SummerShoes #FootwearSale #TreatYourFeet #LimitedTime #ShopNow",
+    "rating": 3
+  }
+]

@@ -1,0 +1,33 @@
+fun:
+- Use emojis
+- Add playful, humorous language
+- Keep it short and snappy
+- Use exclamations and puns
+
+professional:
+- Formal tone, no emojis
+- Focus on value and benefits
+- Clarity > Creativity
+- Use stats or direct CTAs
+
+semi-fun:
+- Conversational tone with mild formality
+- One emoji per message max
+- Blend enthusiasm with structure
+
+Meta:
+- Visual + emoji-friendly
+- Works well with hashtags
+- CTA buttons common
+
+Google:
+- Concise headline and description
+- Strict character limits
+- No emojis or slang
+- Must contain high-ranking keywords
+
+LinkedIn:
+- Clear, professional narrative
+- No emojis
+- Emphasize business value
+- Avoid aggressive CTAs

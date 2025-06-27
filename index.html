@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ad Rewriter - Intelligent Marketing Copy Generator</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --gray: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            color: var(--gray);
+        }
+
+        .main-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            opacity: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        textarea, input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .tone-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .tone-option {
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tone-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .tone-option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .tone-option.selected {
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        .tone-option.selected::before {
+            opacity: 1;
+        }
+
+        .platform-selector {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .platform-count {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .platform-inputs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .platform-input {
+            flex: 1;
+            min-width: 200px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .results {
+            margin-top: 3rem;
+        }
+
+        .result-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateY(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+
+        .platform-badge {
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .platform-badge.meta {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .platform-badge.google {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .platform-badge.linkedin {
+            background: #e1f5fe;
+            color: #0277bd;
+        }
+
+        .result-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .feedback-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: none;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .star {
+            font-size: 2rem;
+            color: var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star:hover, .star.active {
+            color: #fbbf24;
+            transform: scale(1.1);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .insights-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .insights-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .insights-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .insights-content {
+            background: var(--white);
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c00;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .platform-selector {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>AI Ad Rewriter</h1>
+            <p>Transform your marketing copy with AI-powered intelligence</p>
+        </header>
+
+        <div class="main-card">
+            <form id="adForm">
+                <div class="form-group">
+                    <label for="adText">Original Ad Text</label>
+                    <textarea id="adText" placeholder="Enter your ad text here... e.g., 'Get 50% off on all our summer shoes collection!'" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Tone</label>
+                    <div class="tone-selector">
+                        <div class="tone-option" data-tone="fun">
+                            <strong>Fun</strong>
+                            <div style="font-size: 0.875rem; color: var(--gray); margin-top: 0.25rem;">Playful & Energetic</div>
+                        </div>
+                        <div class="tone-option" data-tone="professional">
+                            <strong>Professional</strong>
+                            <div style="font-size: 0.875rem; color: var(--gray); margin-top: 0.25rem;">Formal & Business</div>
+                        </div>
+                        <div class="tone-option" data-tone="semi-fun">
+                            <strong>Semi-Fun</strong>
+                            <div style="font-size: 0.875rem; color: var(--gray); margin-top: 0.25rem;">Balanced & Friendly</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Platform Selection</label>
+                    <div class="platform-selector">
+                        <div class="platform-count">
+                            <label for="platformCount">Number of Platforms</label>
+                            <select id="platformCount">
+                                <option value="1">1 Platform</option>
+                                <option value="2">2 Platforms</option>
+                                <option value="3">3 Platforms</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="platform-inputs" id="platformInputs"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <span>Generate Optimized Ads</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14m-7-7l7 7-7 7"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Creating your optimized ads...</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="results" id="results"></div>
+    </div>
+
+    <button class="insights-btn" onclick="showInsights()" title="View Insights">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11H3m6 0v6m0-6l-6 6m11-3h6m-6 0v-6m0 6l6-6"/>
+        </svg>
+    </button>
+
+    <div class="insights-modal" id="insightsModal">
+        <div class="insights-content">
+            <button class="close-modal" onclick="closeInsights()">&times;</button>
+            <h2 style="margin-bottom: 1.5rem;">Performance Insights</h2>
+            <div id="insightsData">Loading insights...</div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let selectedTone = '';
+        let currentResponse = {};
+        let availablePlatforms = ['Meta', 'Google', 'LinkedIn'];
+        
+        // Initialize animations
+        gsap.timeline()
+            .to('.header', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+            .to('.main-card', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4');
+
+        // Tone selection
+        document.querySelectorAll('.tone-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.tone-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedTone = this.dataset.tone;
+                gsap.to(this, { scale: 1.05, duration: 0.2, yoyo: true, repeat: 1 });
+            });
+        });
+
+        // Platform count change
+        document.getElementById('platformCount').addEventListener('change', updatePlatformInputs);
+
+        // Initialize platform inputs
+        updatePlatformInputs();
+
+        function updatePlatformInputs() {
+            const count = parseInt(document.getElementById('platformCount').value);
+            const container = document.getElementById('platformInputs');
+            container.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+                const div = document.createElement('div');
+                div.className = 'platform-input';
+                div.innerHTML = `
+                    <label for="platform${i}">Platform ${i + 1}</label>
+                    <select id="platform${i}" class="platform-select" data-index="${i}">
+                        <option value="">Select Platform</option>
+                    </select>
+                `;
+                container.appendChild(div);
+            }
+
+            // Update all selects
+            updatePlatformOptions();
+
+            // Animate new inputs
+            gsap.to('.platform-input', {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: 'power3.out'
+            });
+        }
+
+        function updatePlatformOptions() {
+            const selects = document.querySelectorAll('.platform-select');
+            const selectedValues = Array.from(selects).map(s => s.value).filter(v => v);
+
+            selects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Platform</option>';
+                
+                availablePlatforms.forEach(platform => {
+                    if (!selectedValues.includes(platform) || platform === currentValue) {
+                        const option = document.createElement('option');
+                        option.value = platform;
+                        option.textContent = platform;
+                        if (platform === currentValue) option.selected = true;
+                        select.appendChild(option);
+                    }
+                });
+            });
+        }
+
+        // Update options when any select changes
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('platform-select')) {
+                updatePlatformOptions();
+            }
+        });
+
+        // Form submission
+        document.getElementById('adForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const adText = document.getElementById('adText').value;
+            const platforms = Array.from(document.querySelectorAll('.platform-select'))
+                .map(s => s.value)
+                .filter(v => v);
+
+            if (!selectedTone) {
+                showError('Please select a tone');
+                return;
+            }
+
+            if (platforms.length === 0) {
+                showError('Please select at least one platform');
+                return;
+            }
+
+            // Clear previous results
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/run-enhanced-agent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ad_text: adText,
+                        tone: selectedTone,
+                        platforms: platforms
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to generate ads');
+
+                const data = await response.json();
+                currentResponse = {
+                    ad_text: adText,
+                    tone: selectedTone,
+                    platforms: platforms,
+                    rewritten_output: data.rewritten_ads
+                };
+
+                displayResults(data.rewritten_ads, platforms);
+            } catch (error) {
+                showError('Error generating ads: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        function displayResults(rewrittenAds, platforms) {
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '<h2 style="margin-bottom: 1.5rem;">Optimized Ads</h2>';
+
+            // Parse the response to extract individual platform ads
+            const adParts = rewrittenAds.split(/(?=Meta:|Google:|LinkedIn:)/);
+            
+            platforms.forEach((platform, index) => {
+                const adText = extractPlatformAd(rewrittenAds, platform);
+                
+                const resultCard = document.createElement('div');
+                resultCard.className = 'result-card';
+                resultCard.innerHTML = `
+                    <div class="platform-badge ${platform.toLowerCase()}">${platform}</div>
+                    <div class="result-text">${adText || 'No content generated for this platform'}</div>
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" onclick="regenerate()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 1 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                            </svg>
+                            Regenerate
+                        </button>
+                        <button class="btn btn-secondary" onclick="toggleFeedback(${index})">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                            </svg>
+                            Rate This
+                        </button>
+                    </div>
+                    <div class="feedback-section" id="feedback-${index}">
+                        <p style="margin-bottom: 0.5rem;">How would you rate this ad?</p>
+                        <div class="rating-stars" data-platform="${platform}">
+                            ${[1,2,3,4,5].map(star => `<span class="star" data-rating="${star}">★</span>`).join('')}
+                        </div>
+                        <button class="btn btn-primary" onclick="submitFeedback(${index}, '${platform}')">Submit Feedback</button>
+                    </div>
+                `;
+                
+                resultsContainer.appendChild(resultCard);
+            });
+
+            // Animate results
+            gsap.to('.result-card', {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                stagger: 0.1,
+                ease: 'power3.out'
+            });
+
+            // Setup star ratings
+            setupStarRatings();
+        }
+
+        function extractPlatformAd(fullText, platform) {
+            const regex = new RegExp(`${platform}:\\s*([\\s\\S]*?)(?=(?:Meta:|Google:|LinkedIn:|$))`, 'i');
+            const match = fullText.match(regex);
+            return match ? match[1].trim() : '';
+        }
+
+        function setupStarRatings() {
+            document.querySelectorAll('.rating-stars').forEach(container => {
+                const stars = container.querySelectorAll('.star');
+                let rating = 0;
+
+                stars.forEach(star => {
+                    star.addEventListener('click', function() {
+                        rating = parseInt(this.dataset.rating);
+                        stars.forEach((s, index) => {
+                            s.classList.toggle('active', index < rating);
+                        });
+                    });
+
+                    star.addEventListener('mouseenter', function() {
+                        const hoverRating = parseInt(this.dataset.rating);
+                        stars.forEach((s, index) => {
+                            s.style.color = index < hoverRating ? '#fbbf24' : '';
+                        });
+                    });
+                });
+
+                container.addEventListener('mouseleave', function() {
+                    stars.forEach((s, index) => {
+                        s.style.color = s.classList.contains('active') ? '#fbbf24' : '';
+                    });
+                });
+
+                container.dataset.rating = '0';
+            });
+        }
+
+        function toggleFeedback(index) {
+            const feedbackSection = document.getElementById(`feedback-${index}`);
+            feedbackSection.style.display = feedbackSection.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function submitFeedback(index, platform) {
+            const container = document.querySelector(`#feedback-${index} .rating-stars`);
+            const rating = container.querySelectorAll('.star.active').length;
+
+            if (rating === 0) {
+                showError('Please select a rating');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ...currentResponse,
+                        rating: rating
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to submit feedback');
+
+                // Show success animation
+                const feedbackSection = document.getElementById(`feedback-${index}`);
+                feedbackSection.innerHTML = '<p style="color: var(--success);">✓ Thank you for your feedback!</p>';
+                
+                gsap.to(feedbackSection, {
+                    opacity: 0,
+                    height: 0,
+                    duration: 0.5,
+                    delay: 1,
+                    onComplete: () => feedbackSection.style.display = 'none'
+                });
+            } catch (error) {
+                showError('Error submitting feedback: ' + error.message);
+            }
+        }
+
+        async function regenerate() {
+            document.getElementById('adForm').dispatchEvent(new Event('submit'));
+        }
+
+        async function showInsights() {
+            const modal = document.getElementById('insightsModal');
+            modal.style.display = 'block';
+            
+            try {
+                const response = await fetch('http://127.0.0.1:8000/insights');
+                const data = await response.json();
+                
+                const insightsHTML = `
+                    <div style="display: grid; gap: 1.5rem;">
+                        <div style="background: var(--light); padding: 1.5rem; border-radius: 10px;">
+                            <h3 style="margin-bottom: 1rem;">Summary</h3>
+                            <p>Total Feedback: <strong>${data.analysis_summary.total_feedback}</strong></p>
+                            <p>Average Rating: <strong>${data.analysis_summary.average_rating}/5</strong></p>
+                        </div>
+                        
+                        ${data.analysis_summary.recommendations.length > 0 ? `
+                            <div style="background: #fef3c7; padding: 1.5rem; border-radius: 10px;">
+                                <h3 style="margin-bottom: 1rem;">Recommendations</h3>
+                                <ul style="margin-left: 1.5rem;">
+                                    ${data.analysis_summary.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        
+                        ${Object.keys(data.performance_by_tone).length > 0 ? `
+                            <div>
+                                <h3 style="margin-bottom: 1rem;">Performance by Tone</h3>
+                                <div style="display: grid; gap: 1rem;">
+                                    ${Object.entries(data.performance_by_tone).map(([tone, stats]) => `
+                                        <div style="background: var(--light); padding: 1rem; border-radius: 10px;">
+                                            <strong>${tone}</strong>: ${stats.average.toFixed(1)}/5 (${stats.count} reviews)
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                document.getElementById('insightsData').innerHTML = insightsHTML;
+            } catch (error) {
+                document.getElementById('insightsData').innerHTML = '<p>Error loading insights</p>';
+            }
+        }
+
+        function closeInsights() {
+            document.getElementById('insightsModal').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            gsap.from(errorEl, { opacity: 0, y: -10, duration: 0.3 });
+            
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('insightsModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 
